@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String   @default("")
+  permissions String   @default("[]")
+  isSystem    Boolean  @default(false)
+  users       User[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id           String             @id @default(cuid())
+  name         String
+  email        String             @unique
+  passwordHash String
+  roleId       String
+  role         Role               @relation(fields: [roleId], references: [id])
+  isActive     Boolean            @default(true)
+  tokenVersion Int                @default(0)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  readNotices  NotificationRead[]
+}
+
+model Student {
+  id             String   @id @default(cuid())
+  registrationNo String   @unique
+  firstName      String
+  lastName       String
+  email          String?
+  phone          String
+  dateOfBirth    String?
+  gender         String   @default("OTHER")
+  program        String
+  guardianName   String?
+  guardianPhone  String?
+  address        String?
+  notes          String?
+  status         String   @default("ACTIVE")
+  source         String   @default("PUBLIC")
+  registeredAt   DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([registeredAt])
+  @@index([status])
+}
+
+model AppSetting {
+  id                      String   @id @default("global")
+  institutionName         String   @default("Monoline")
+  registrationPrefix      String   @default("MON")
+  registrationSeparator   String   @default("-")
+  registrationDigits      Int      @default(5)
+  registrationIncludeYear Boolean  @default(true)
+  nextRegistrationNumber  Int      @default(1)
+  publicRegistrationOpen  Boolean  @default(true)
+  updatedAt               DateTime @updatedAt
+}
+
+model Notification {
+  id        String             @id @default(cuid())
+  title     String
+  message   String
+  type      String             @default("INFO")
+  createdAt DateTime           @default(now())
+  reads     NotificationRead[]
+}
+
+model NotificationRead {
+  id             String       @id @default(cuid())
+  notificationId String
+  userId         String
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readAt         DateTime     @default(now())
+
+  @@unique([notificationId, userId])
+}
