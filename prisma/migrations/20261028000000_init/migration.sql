@@ -1,100 +1,117 @@
--- CreateTable
-CREATE TABLE `Role` (
-    `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NOT NULL DEFAULT '',
-    `permissions` VARCHAR(191) NOT NULL DEFAULT '[]',
-    `isSystem` BOOLEAN NOT NULL DEFAULT false,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    UNIQUE INDEX `Role_name_key`(`name`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
 
 -- CreateTable
-CREATE TABLE `User` (
-    `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `email` VARCHAR(191) NOT NULL,
-    `passwordHash` VARCHAR(191) NOT NULL,
-    `roleId` VARCHAR(191) NOT NULL,
-    `isActive` BOOLEAN NOT NULL DEFAULT true,
-    `tokenVersion` INTEGER NOT NULL DEFAULT 0,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+CREATE TABLE "Role" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL DEFAULT '',
+    "permissions" TEXT NOT NULL DEFAULT '[]',
+    "isSystem" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX `User_email_key`(`email`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
-CREATE TABLE `Student` (
-    `id` VARCHAR(191) NOT NULL,
-    `registrationNo` VARCHAR(191) NOT NULL,
-    `firstName` VARCHAR(191) NOT NULL,
-    `lastName` VARCHAR(191) NOT NULL,
-    `email` VARCHAR(191) NULL,
-    `phone` VARCHAR(191) NOT NULL,
-    `dateOfBirth` VARCHAR(191) NULL,
-    `gender` VARCHAR(191) NOT NULL DEFAULT 'OTHER',
-    `program` VARCHAR(191) NOT NULL,
-    `guardianName` VARCHAR(191) NULL,
-    `guardianPhone` VARCHAR(191) NULL,
-    `address` VARCHAR(191) NULL,
-    `notes` VARCHAR(191) NULL,
-    `status` VARCHAR(191) NOT NULL DEFAULT 'ACTIVE',
-    `source` VARCHAR(191) NOT NULL DEFAULT 'PUBLIC',
-    `registeredAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
+    "roleId" TEXT NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "tokenVersion" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX `Student_registrationNo_key`(`registrationNo`),
-    INDEX `Student_registeredAt_idx`(`registeredAt`),
-    INDEX `Student_status_idx`(`status`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
-CREATE TABLE `AppSetting` (
-    `id` VARCHAR(191) NOT NULL DEFAULT 'global',
-    `institutionName` VARCHAR(191) NOT NULL DEFAULT 'Monoline',
-    `registrationPrefix` VARCHAR(191) NOT NULL DEFAULT 'MON',
-    `registrationDigits` INTEGER NOT NULL DEFAULT 5,
-    `registrationIncludeYear` BOOLEAN NOT NULL DEFAULT true,
-    `nextRegistrationNumber` INTEGER NOT NULL DEFAULT 1,
-    `publicRegistrationOpen` BOOLEAN NOT NULL DEFAULT true,
-    `updatedAt` DATETIME(3) NOT NULL,
+CREATE TABLE "Student" (
+    "id" TEXT NOT NULL,
+    "registrationNo" TEXT NOT NULL,
+    "firstName" TEXT NOT NULL,
+    "lastName" TEXT NOT NULL,
+    "email" TEXT,
+    "phone" TEXT NOT NULL,
+    "dateOfBirth" TEXT,
+    "gender" TEXT NOT NULL DEFAULT 'OTHER',
+    "program" TEXT NOT NULL,
+    "guardianName" TEXT,
+    "guardianPhone" TEXT,
+    "address" TEXT,
+    "notes" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'ACTIVE',
+    "source" TEXT NOT NULL DEFAULT 'PUBLIC',
+    "registeredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Notification` (
-    `id` VARCHAR(191) NOT NULL,
-    `title` VARCHAR(191) NOT NULL,
-    `message` VARCHAR(191) NOT NULL,
-    `type` VARCHAR(191) NOT NULL DEFAULT 'INFO',
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CONSTRAINT "Student_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
-CREATE TABLE `NotificationRead` (
-    `id` VARCHAR(191) NOT NULL,
-    `notificationId` VARCHAR(191) NOT NULL,
-    `userId` VARCHAR(191) NOT NULL,
-    `readAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+CREATE TABLE "AppSetting" (
+    "id" TEXT NOT NULL DEFAULT 'global',
+    "institutionName" TEXT NOT NULL DEFAULT 'Monoline',
+    "registrationPrefix" TEXT NOT NULL DEFAULT 'MON',
+    "registrationSeparator" TEXT NOT NULL DEFAULT '-',
+    "registrationDigits" INTEGER NOT NULL DEFAULT 5,
+    "registrationIncludeYear" BOOLEAN NOT NULL DEFAULT true,
+    "nextRegistrationNumber" INTEGER NOT NULL DEFAULT 1,
+    "publicRegistrationOpen" BOOLEAN NOT NULL DEFAULT true,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX `NotificationRead_notificationId_userId_key`(`notificationId`, `userId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CONSTRAINT "AppSetting_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Notification" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "type" TEXT NOT NULL DEFAULT 'INFO',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Notification_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "NotificationRead" (
+    "id" TEXT NOT NULL,
+    "notificationId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "readAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "NotificationRead_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Student_registrationNo_key" ON "Student"("registrationNo");
+
+-- CreateIndex
+CREATE INDEX "Student_registeredAt_idx" ON "Student"("registeredAt");
+
+-- CreateIndex
+CREATE INDEX "Student_status_idx" ON "Student"("status");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "NotificationRead_notificationId_userId_key" ON "NotificationRead"("notificationId", "userId");
 
 -- AddForeignKey
-ALTER TABLE `User` ADD CONSTRAINT `User_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `Role`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `NotificationRead` ADD CONSTRAINT `NotificationRead_notificationId_fkey` FOREIGN KEY (`notificationId`) REFERENCES `Notification`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "NotificationRead" ADD CONSTRAINT "NotificationRead_notificationId_fkey" FOREIGN KEY ("notificationId") REFERENCES "Notification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `NotificationRead` ADD CONSTRAINT `NotificationRead_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "NotificationRead" ADD CONSTRAINT "NotificationRead_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
